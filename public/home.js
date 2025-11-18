@@ -28,7 +28,7 @@ function addMessage(sender, text) {
   // 名前（吹き出しの外）
   const nameTag = document.createElement("div");
   nameTag.className = "name-tag";
-  nameTag.textContent = sender === "user" ? "You" : "Alice";
+  nameTag.textContent = sender === "user" ? "You" : "秘書Alice";
 
   // アバター
   const avatar = document.createElement("div");

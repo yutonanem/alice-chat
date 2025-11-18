@@ -1,0 +1,137 @@
+/* 全体レイアウト */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica", "Arial", sans-serif;
+  background: #f0f2f5;
+}
+
+/* チャットの外枠 */
+.chat-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  background: #ffffff;
+}
+
+/* メッセージ表示エリア */
+#chat-box {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+/* メッセージの行 */
+.msg {
+  display: flex;
+  align-items: flex-end;
+  margin: 12px 0;
+}
+
+/* 共通のバブル */
+.bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  word-break: break-word;
+  position: relative;
+}
+
+/* AI（左） */
+.ai-msg {
+  justify-content: flex-start;
+}
+
+.ai-msg .bubble {
+  background: #e8e8e8;
+  color: #333;
+  border-top-left-radius: 0;
+}
+
+/* ユーザー（右） */
+.user-msg {
+  justify-content: flex-end;
+}
+
+.user-msg .bubble {
+  background: #4e9af1;
+  color: white;
+  border-top-right-radius: 0;
+}
+
+/* 時刻 */
+.meta {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+/* 吹き出しの外の名前表示 */
+.name-tag {
+  font-size: 12px;
+  margin: 0 6px;
+  opacity: 0.7;
+}
+
+/* アバター */
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: #ccc;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin: 0 8px;
+}
+
+/* 入力欄エリア */
+.input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background: #fff;
+}
+
+/* 入力ボックス */
+#user-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+/* 送信ボタン */
+#send-btn {
+  margin-left: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background: #4e9af1;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#send-btn:hover {
+  opacity: 0.8;
+}
+
+/* スマホ対応 */
+@media (max-width: 600px) {
+  .chat-container {
+    border: none;
+    height: 100vh;
+  }
+
+  #send-btn {
+    padding: 10px 14px;
+  }
+}

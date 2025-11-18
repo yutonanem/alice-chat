@@ -6,26 +6,31 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const app = express();
-app.use(express.json());
-app.use(express.static("public"));
+// __dirname 相当を ES Modules で取得
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+const app = express();
+
+// JSON ボディをパース
+app.use(express.json());
+
+// public フォルダを静的ファイルとして配信（絶対パスで指定）
+app.use(express.static(path.join(__dirname, "public")));
+
+// OpenAI クライアント
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// __dirname 取得
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// index.html を返す
+// ルートにアクセスされたときに index.html を返す
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// ⭐ 新しい Chat API 形式に完全対応したバージョン
+// ⭐ Chat エンドポイント（Alice ちゃん）
 app.post("/chat", async (req, res) => {
-  const userMessage = req.body.message;
+  const userMessage = req.body.message ?? "";
 
   const systemPrompt = `
 あなたの名前は「Alice」。一人称は必ず「あーし」。ユーザーの呼び方は必ず「You」。
@@ -55,13 +60,15 @@ Rate limit 等の障害が起きたら可愛く説明する（例：「眠気MAX
     res.json({ reply });
   } catch (error) {
     console.error("エラー:", error);
-    res.json({
+    res.status(500).json({
       reply: "なんか通信エラーっぽい〜🥺💧 You もう1回送ってみてぇ💦",
     });
   }
 });
 
-// サーバー起動
-app.listen(3000, () => {
-  console.log("Server running → http://localhost:3000");
+// 🔥 サーバー起動（Render 対応版）
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

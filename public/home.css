@@ -1,7 +1,16 @@
 /* 全体レイアウト */
+* {
+  box-sizing: border-box;
+}
+
+html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
+}
+
+body {
   font-family: "Helvetica", "Arial", sans-serif;
   background: #f0f2f5;
 }
@@ -9,9 +18,9 @@ body {
 /* チャットの外枠 */
 .chat-container {
   width: 100%;
-  max-width: 450px;
+  max-width: 450px;      /* PC では 450px まで */
   margin: 0 auto;
-  height: 100vh;
+  min-height: 100vh;     /* 画面の高さにフィット */
   display: flex;
   flex-direction: column;
   border: 1px solid #ddd;
@@ -126,9 +135,14 @@ body {
 
 /* スマホ対応 */
 @media (max-width: 600px) {
+  body {
+    background: #ffffff;       /* 背景も白にして余白感を消す */
+  }
+
   .chat-container {
+    max-width: 100%;           /* 画面いっぱい */
     border: none;
-    height: 100vh;
+    min-height: 100vh;
   }
 
   #send-btn {

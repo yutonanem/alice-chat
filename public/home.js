@@ -3,6 +3,15 @@ const input = document.getElementById("user-input");
 const button = document.getElementById("send-btn");
 const chatBox = document.getElementById("chat-box");
 
+//  履歴の復元（ページ読み込み時）
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("chatHistory");
+  if (saved) {
+    chatBox.innerHTML = saved;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+});
+
 // 時刻の関数
 function nowTime() {
   const d = new Date();
@@ -56,6 +65,10 @@ function addMessage(sender, text) {
 
   chatBox.appendChild(line);
   chatBox.scrollTop = chatBox.scrollHeight;
+
+ 
+  //  ここで履歴を保存
+  localStorage.setItem("chatHistory", chatBox.innerHTML);
 }
 
 // 送信ボタン

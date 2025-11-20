@@ -59,6 +59,7 @@ function attachAssistantAvatarHandlers() {
     avatar.addEventListener("click", handleAvatarClick);
     if (assistantAvatarDataUrl) {
       avatar.style.backgroundImage = `url(${assistantAvatarDataUrl})`;
+      avatar.textContent = ""; // ★ 写真があるときは A を消す
     }
   });
 }
@@ -81,6 +82,7 @@ avatarInput.addEventListener("change", (e) => {
     // すべての秘書アバターに反映
     document.querySelectorAll(".avatar.ai-avatar").forEach((avatar) => {
       avatar.style.backgroundImage = `url(${assistantAvatarDataUrl})`;
+      avatar.textContent = ""; // ★ ここでも A を消す
     });
   };
   reader.readAsDataURL(file);
@@ -102,10 +104,16 @@ function addMessage(sender, text) {
     // 秘書側のアバター
     avatar = document.createElement("div");
     avatar.className = "avatar ai-avatar";
-    avatar.textContent = "A";
+
     if (assistantAvatarDataUrl) {
+      // ★ 画像が設定済みなら写真だけ表示
       avatar.style.backgroundImage = `url(${assistantAvatarDataUrl})`;
+      avatar.textContent = "";
+    } else {
+      // まだ写真がないときだけ A を表示
+      avatar.textContent = "A";
     }
+
     avatar.addEventListener("click", handleAvatarClick);
   }
 

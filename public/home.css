@@ -18,9 +18,9 @@ body {
 /* チャットの外枠 */
 .chat-container {
   width: 100%;
-  max-width: 450px;      /* PC では 450px まで */
+  max-width: 450px; /* PC では 450px まで */
   margin: 0 auto;
-  min-height: 100vh;     /* 画面の高さにフィット */
+  min-height: 100vh; /* 画面の高さにフィット */
   display: flex;
   flex-direction: column;
   border: 1px solid #ddd;
@@ -91,13 +91,44 @@ body {
 .avatar {
   width: 40px;
   height: 40px;
-  background: #ccc;
   border-radius: 50%;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: #ccc;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
   margin: 0 8px;
+  position: relative; /* 編集アイコン用 */
+}
+
+/* ユーザー用アバター（写真用） */
+.user-avatar {
+  cursor: pointer;
+}
+
+/* 秘書用アバター（デフォルトのまま、A文字でもOK） */
+.ai-avatar {
+  background-color: #ccc;
+}
+
+/* ユーザーアバター右上の「編集」マーク */
+.user-avatar::after {
+  content: "✎";
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 入力欄エリア */
@@ -136,11 +167,11 @@ body {
 /* スマホ対応 */
 @media (max-width: 600px) {
   body {
-    background: #ffffff;       /* 背景も白にして余白感を消す */
+    background: #ffffff;
   }
 
   .chat-container {
-    max-width: 100%;           /* 画面いっぱい */
+    max-width: 100%;
     border: none;
     min-height: 100vh;
   }

@@ -2,17 +2,28 @@
 const input = document.getElementById("user-input");
 const button = document.getElementById("send-btn");
 const chatBox = document.getElementById("chat-box");
+const avatarInput = document.getElementById("avatar-input");
 
-//  履歴の復元（ページ読み込み時）
+// ===============================
+//  ユーザーアイコン（データURL）
+// ===============================
+let userAvatarDataUrl = localStorage.getItem("userAvatar") || null;
+
+// ===============================
+//  ページ読み込み時：履歴とアイコンを復元
+// ===============================
 window.addEventListener("load", () => {
   const saved = localStorage.getItem("chatHistory");
   if (saved) {
     chatBox.innerHTML = saved;
-    chatBox.scrollTop = chatBox.scrollHeight;
   }
+
+  // 既存のユーザーアバターにクリックハンドラ＆画像を付ける
+  attachUserAvatarHandlers();
+  chatBox.scrollTop = chatBox.scrollHeight;
 });
 
-// 時刻の関数
+// 現在時刻
 function nowTime() {
   const d = new Date();
   return `${String(d.getHours()).padStart(2, "0")}:${String(
@@ -29,6 +40,40 @@ function escapeHtml(s = "") {
     .replaceAll("\n", "<br>");
 }
 
+// ユーザーアバターにイベントと画像を付ける
+function attachUserAvatarHandlers() {
+  const avatars = document.querySelectorAll(".avatar.user-avatar");
+  avatars.forEach((avatar) => {
+    avatar.addEventListener("click", handleAvatarClick);
+    if (userAvatarDataUrl) {
+      avatar.style.backgroundImage = `url(${userAvatarDataUrl})`;
+    }
+  });
+}
+
+// アバタークリック → ファイル選択
+function handleAvatarClick() {
+  avatarInput.click();
+}
+
+// ファイル選択 → 画像読み込み＆保存
+avatarInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    userAvatarDataUrl = reader.result;
+    localStorage.setItem("userAvatar", userAvatarDataUrl);
+
+    // すべてのユーザーアバターに反映
+    document.querySelectorAll(".avatar.user-avatar").forEach((avatar) => {
+      avatar.style.backgroundImage = `url(${userAvatarDataUrl})`;
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
 // メッセージ追加関数
 function addMessage(sender, text) {
   const line = document.createElement("div");
@@ -41,8 +86,17 @@ function addMessage(sender, text) {
 
   // アバター
   const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = sender === "user" ? "You" : "A";
+  if (sender === "user") {
+    avatar.className = "avatar user-avatar";
+    if (userAvatarDataUrl) {
+      avatar.style.backgroundImage = `url(${userAvatarDataUrl})`;
+    }
+    avatar.addEventListener("click", handleAvatarClick);
+    avatar.textContent = ""; // 画像アイコン前提
+  } else {
+    avatar.className = "avatar ai-avatar";
+    avatar.textContent = "A"; // 秘書は丸Aのまま
+  }
 
   // 吹き出し
   const bubble = document.createElement("div");
@@ -66,8 +120,7 @@ function addMessage(sender, text) {
   chatBox.appendChild(line);
   chatBox.scrollTop = chatBox.scrollHeight;
 
- 
-  //  ここで履歴を保存
+  // 履歴を保存
   localStorage.setItem("chatHistory", chatBox.innerHTML);
 }
 

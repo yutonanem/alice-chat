@@ -4,22 +4,22 @@ const button = document.getElementById("send-btn");
 const chatBox = document.getElementById("chat-box");
 const avatarInput = document.getElementById("avatar-input");
 
-// ===============================
-//  ユーザーアイコン（データURL）
-// ===============================
-let userAvatarDataUrl = localStorage.getItem("userAvatar") || null;
+// 秘書アイコン（Base64データURL）
+let assistantAvatarDataUrl = localStorage.getItem("assistantAvatar") || null;
 
-// ===============================
-//  ページ読み込み時：履歴とアイコンを復元
-// ===============================
+// ページ読み込み時：履歴とアイコンを復元
 window.addEventListener("load", () => {
   const saved = localStorage.getItem("chatHistory");
   if (saved) {
     chatBox.innerHTML = saved;
   }
 
-  // 既存のユーザーアバターにクリックハンドラ＆画像を付ける
-  attachUserAvatarHandlers();
+  // 古い履歴のアバターを新仕様に整える
+  normalizeAvatars();
+
+  // 秘書アバターにクリックハンドラ＆画像を付ける
+  attachAssistantAvatarHandlers();
+
   chatBox.scrollTop = chatBox.scrollHeight;
 });
 
@@ -40,13 +40,25 @@ function escapeHtml(s = "") {
     .replaceAll("\n", "<br>");
 }
 
-// ユーザーアバターにイベントと画像を付ける
-function attachUserAvatarHandlers() {
-  const avatars = document.querySelectorAll(".avatar.user-avatar");
+// 古い履歴のアバターを新仕様にする
+function normalizeAvatars() {
+  // 秘書側
+  document.querySelectorAll(".msg.ai-msg .avatar").forEach((avatar) => {
+    avatar.classList.add("ai-avatar");
+    if (!avatar.textContent) {
+      avatar.textContent = "A";
+    }
+  });
+  // ユーザー側は CSS で非表示にしているので放置でOK
+}
+
+// 秘書アバターにイベントと画像を付ける
+function attachAssistantAvatarHandlers() {
+  const avatars = document.querySelectorAll(".avatar.ai-avatar");
   avatars.forEach((avatar) => {
     avatar.addEventListener("click", handleAvatarClick);
-    if (userAvatarDataUrl) {
-      avatar.style.backgroundImage = `url(${userAvatarDataUrl})`;
+    if (assistantAvatarDataUrl) {
+      avatar.style.backgroundImage = `url(${assistantAvatarDataUrl})`;
     }
   });
 }
@@ -63,12 +75,12 @@ avatarInput.addEventListener("change", (e) => {
 
   const reader = new FileReader();
   reader.onload = () => {
-    userAvatarDataUrl = reader.result;
-    localStorage.setItem("userAvatar", userAvatarDataUrl);
+    assistantAvatarDataUrl = reader.result;
+    localStorage.setItem("assistantAvatar", assistantAvatarDataUrl);
 
-    // すべてのユーザーアバターに反映
-    document.querySelectorAll(".avatar.user-avatar").forEach((avatar) => {
-      avatar.style.backgroundImage = `url(${userAvatarDataUrl})`;
+    // すべての秘書アバターに反映
+    document.querySelectorAll(".avatar.ai-avatar").forEach((avatar) => {
+      avatar.style.backgroundImage = `url(${assistantAvatarDataUrl})`;
     });
   };
   reader.readAsDataURL(file);
@@ -84,18 +96,17 @@ function addMessage(sender, text) {
   nameTag.className = "name-tag";
   nameTag.textContent = sender === "user" ? "You" : "秘書";
 
-  // アバター
-  const avatar = document.createElement("div");
-  if (sender === "user") {
-    avatar.className = "avatar user-avatar";
-    if (userAvatarDataUrl) {
-      avatar.style.backgroundImage = `url(${userAvatarDataUrl})`;
+  let avatar = null;
+
+  if (sender === "ai") {
+    // 秘書側のアバター
+    avatar = document.createElement("div");
+    avatar.className = "avatar ai-avatar";
+    avatar.textContent = "A";
+    if (assistantAvatarDataUrl) {
+      avatar.style.backgroundImage = `url(${assistantAvatarDataUrl})`;
     }
     avatar.addEventListener("click", handleAvatarClick);
-    avatar.textContent = ""; // 画像アイコン前提
-  } else {
-    avatar.className = "avatar ai-avatar";
-    avatar.textContent = "A"; // 秘書は丸Aのまま
   }
 
   // 吹き出し
@@ -108,10 +119,11 @@ function addMessage(sender, text) {
 
   // 配置
   if (sender === "user") {
+    // ユーザー側はアイコンなし
     line.appendChild(nameTag);
     line.appendChild(bubble);
-    line.appendChild(avatar);
   } else {
+    // 秘書側はアイコンあり
     line.appendChild(avatar);
     line.appendChild(bubble);
     line.appendChild(nameTag);

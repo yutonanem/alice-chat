@@ -18,9 +18,9 @@ body {
 /* チャットの外枠 */
 .chat-container {
   width: 100%;
-  max-width: 450px; /* PC では 450px まで */
+  max-width: 450px;
   margin: 0 auto;
-  min-height: 100vh; /* 画面の高さにフィット */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   border: 1px solid #ddd;
@@ -72,6 +72,11 @@ body {
   border-top-right-radius: 0;
 }
 
+/* ユーザー側のアバターは非表示にする */
+.msg.user-msg .avatar {
+  display: none;
+}
+
 /* 時刻 */
 .meta {
   font-size: 10px;
@@ -87,7 +92,7 @@ body {
   opacity: 0.7;
 }
 
-/* アバター */
+/* アバター共通 */
 .avatar {
   width: 40px;
   height: 40px;
@@ -101,21 +106,16 @@ body {
   align-items: center;
   font-weight: bold;
   margin: 0 8px;
-  position: relative; /* 編集アイコン用 */
+  position: relative;
 }
 
-/* ユーザー用アバター（写真用） */
-.user-avatar {
+/* 秘書用アバター（写真＋編集ボタン） */
+.ai-avatar {
   cursor: pointer;
 }
 
-/* 秘書用アバター（デフォルトのまま、A文字でもOK） */
-.ai-avatar {
-  background-color: #ccc;
-}
-
-/* ユーザーアバター右上の「編集」マーク */
-.user-avatar::after {
+/* 秘書アバター右上の「編集」マーク */
+.ai-avatar::after {
   content: "✎";
   position: absolute;
   top: -4px;
